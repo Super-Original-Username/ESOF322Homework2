@@ -52,7 +52,7 @@ class InsertionSort implements SortMethod {
     @Override
     public int[] sort(int[] nums) {
         System.out.println("Insertion Sort");
-        int[] toSort = nums;
+        int[] toSort = nums.clone(); // Clones the original array so we can reuse it when switching sort systems
         int l = toSort.length;
         for (int i = 1; i < l; i++) {
             int k = toSort[i];
@@ -70,7 +70,7 @@ class InsertionSort implements SortMethod {
 class BubbleSort implements SortMethod {
     @Override
     public int[] sort(int[] nums) {
-        int[] toSort = nums;
+        int[] toSort = nums.clone(); // Clones the original array so we can reuse it when switching sort systems
         int l = toSort.length;
         for (int i = 0; i < l - 1; i++) { // iterates forward from each item in the array, to ignore any previously sorted items
             for (int j = 0; j < l - 1 - i; j++) {
@@ -85,13 +85,61 @@ class BubbleSort implements SortMethod {
     }
 }
 
-class MergeSort implements SortMethod { // We totally forgot how to do a MergeSort, so we copied this one directly from geeksforgeeks.org
+class MergeSort implements SortMethod {
     @Override
     public int[] sort(int[] nums) {
-        int[] hahalol = {1, 0, 1};
-        return hahalol;
+        int[] toSort = nums.clone();
+        beginSort(toSort,0,toSort.length-1);
+        return toSort;
     }
-    //public void merge
+    public void beginSort(int[] arr, int lBound, int rBound){
+        if (lBound<rBound){
+            int middle = (lBound+rBound)/2;
+
+            beginSort(arr,lBound,middle);
+            beginSort(arr,middle+1,rBound);
+
+            merge(arr,lBound,middle,rBound);
+        }
+    }
+    void merge(int arr[], int lBound, int middle, int rBound) {
+        int lHalf = middle - lBound + 1;
+        int rHalf = rBound - middle;
+        int L[] = new int [lHalf];
+        int R[] = new int [rHalf];
+
+        for (int i=0; i<lHalf; ++i) // Creates temp arrays for the halves we will work with
+            L[i] = arr[lBound + i];
+        for (int j=0; j<rHalf; ++j)
+            R[j] = arr[middle + 1+ j];
+
+        int i = 0, j = 0;
+
+        int sub = lBound; // Sets the initial value of the new subarray
+        while (i < lHalf && j < rHalf) {
+            if (L[i] <= R[j]) {
+                arr[sub] = L[i];
+                i++;
+            }
+            else {
+                arr[sub] = R[j];
+                j++;
+            }
+            sub++;
+        }
+
+        while (i < lHalf) { // If any items remain in L[], they get copied back to the main array
+            arr[sub] = L[i];
+            i++;
+            sub++;
+        }
+
+        while (j < rHalf) { // If any items remain in L[], they get copied back to the main array
+            arr[sub] = R[j];
+            j++;
+            sub++;
+        }
+    }
 }
 
 class Driver {
