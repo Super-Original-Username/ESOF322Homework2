@@ -10,15 +10,15 @@ abstract class MathSoftware {
     private SortMethod sMethod;
     private int[] sorted;
 
-    public void mathSort(int[] nums) {
+    public void mathSort(int[] nums) { // Calls the sorting method for the current sortMethod
         sorted = sMethod.sort(nums);
     }
 
-    public void setSortStrategy(SortMethod s) {
+    public void setSortStrategy(SortMethod s) { // Allows the user to set a new sort method for their program
         sMethod = s;
     }
 
-    public void displayNums() {
+    public void displayNums() { // Prints out the numbers in the sorted array
         for (int num : sorted) {
             System.out.print(num + " ");
         }
@@ -55,13 +55,13 @@ class InsertionSort implements SortMethod {
         int[] toSort = nums.clone(); // Clones the original array so we can reuse it when switching sort systems
         int l = toSort.length;
         for (int i = 1; i < l; i++) {
-            int k = toSort[i];
+            int key = toSort[i];
             int j = i - 1;
-            while (j >= 0 && toSort[j] > k) {
+            while (j >= 0 && toSort[j] > key) { // Shifts every item in the array that is greater than the key forward by one
                 toSort[j + 1] = toSort[j];
                 --j;
             }
-            toSort[j + 1] = k;
+            toSort[j + 1] = key;
         }
         return toSort;
     }
@@ -74,7 +74,7 @@ class BubbleSort implements SortMethod {
         int l = toSort.length;
         for (int i = 0; i < l - 1; i++) { // iterates forward from each item in the array, to ignore any previously sorted items
             for (int j = 0; j < l - 1 - i; j++) {
-                if (toSort[j] > toSort[j + 1]) {
+                if (toSort[j] > toSort[j + 1]) { // Flips the positions of the current and next items in the array if this condition is met
                     int temp = toSort[j];
                     toSort[j] = toSort[j + 1];
                     toSort[j + 1] = temp;
@@ -88,53 +88,53 @@ class BubbleSort implements SortMethod {
 class MergeSort implements SortMethod {
     @Override
     public int[] sort(int[] nums) {
-        int[] toSort = nums.clone();
-        beginSort(toSort,0,toSort.length-1);
+        int[] toSort = nums.clone(); // Clones the original array so we can reuse it when switching sort systems
+        beginSort(toSort, 0, toSort.length - 1); // Initial call to our recursive mergesort method
         return toSort;
     }
-    public void beginSort(int[] arr, int lBound, int rBound){
-        if (lBound<rBound){
-            int middle = (lBound+rBound)/2;
 
-            beginSort(arr,lBound,middle);
-            beginSort(arr,middle+1,rBound);
+    public void beginSort(int[] arr, int lBound, int rBound) {
+        if (lBound < rBound) {
+            int middle = (lBound + rBound) / 2; // calculates the middle bound of the array fed into the function for the recursive calls
 
-            merge(arr,lBound,middle,rBound);
+            beginSort(arr, lBound, middle);
+            beginSort(arr, middle + 1, rBound);
+
+            merge(arr, lBound, middle, rBound);
         }
     }
+
     void merge(int arr[], int lBound, int middle, int rBound) {
         int lHalf = middle - lBound + 1;
         int rHalf = rBound - middle;
-        int L[] = new int [lHalf];
-        int R[] = new int [rHalf];
+        int L[] = new int[lHalf];
+        int R[] = new int[rHalf];
 
-        for (int i=0; i<lHalf; ++i) // Creates temp arrays for the halves we will work with
+        for (int i = 0; i < lHalf; ++i) // Creates temp arrays for the halves we will work with
             L[i] = arr[lBound + i];
-        for (int j=0; j<rHalf; ++j)
-            R[j] = arr[middle + 1+ j];
+        for (int j = 0; j < rHalf; ++j)
+            R[j] = arr[middle + 1 + j];
 
-        int i = 0, j = 0;
+        int i = 0;
+        int j = 0;
 
         int sub = lBound; // Sets the initial value of the new subarray
         while (i < lHalf && j < rHalf) {
-            if (L[i] <= R[j]) {
+            if (L[i] <= R[j]) {  // This sorts the subarray with values from our right and left arrays
                 arr[sub] = L[i];
                 i++;
-            }
-            else {
+            } else {
                 arr[sub] = R[j];
                 j++;
             }
             sub++;
         }
-
         while (i < lHalf) { // If any items remain in L[], they get copied back to the main array
             arr[sub] = L[i];
             i++;
             sub++;
         }
-
-        while (j < rHalf) { // If any items remain in L[], they get copied back to the main array
+        while (j < rHalf) { // If any items remain in R[], they get copied back to the main array
             arr[sub] = R[j];
             j++;
             sub++;
@@ -152,20 +152,19 @@ class Driver {
             Scanner s = new Scanner(System.in);
             System.out.println("Choose your math software.\nEnter 1 for Mathematica\nEnter 2 for MTool\nEnter 3 for MyMath");
             while (m == null) { // Allows the user to select their math tool
-                int tool = s.nextInt();
-                s.nextLine(); // Clears out the \n that nextInt didn't read
+                String tool = s.nextLine();
                 switch (tool) {
-                    case 1:
+                    case "1":
                         m = new Mathematica();
                         break;
-                    case 2:
+                    case "2":
                         m = new MTool();
                         break;
-                    case 3:
+                    case "3":
                         m = new MyMath();
                         break;
                     default:
-                        System.out.println("That is not an option, please try entering the number for your math tool again");
+                        System.out.println("That is not an option, please try again");
                         break;
                 }
             }
@@ -175,24 +174,23 @@ class Driver {
                 System.out.println("Which sorting method would you like to switch to?\nEnter 1 for Insertion Sort\n" +
                         "Enter 2 for Merge Sort\nEnter 3 for Bubble Sort");
                 boolean sortChosen = false;
-                while (sortChosen == false) { // Allows the user to select their new sorting tool
-                    int method = s.nextInt();
-                    s.nextLine(); // Clears out the \n that nextInt didn't read
+                while (!sortChosen) { // Allows the user to select their new sorting tool
+                    String method = s.nextLine();
                     switch (method) {
-                        case 1:
+                        case "1":
                             m.setSortStrategy(new InsertionSort());
                             sortChosen = true;
                             break;
-                        case 2:
+                        case "2":
                             m.setSortStrategy(new MergeSort());
                             sortChosen = true;
                             break;
-                        case 3:
+                        case "3":
                             m.setSortStrategy(new BubbleSort());
                             sortChosen = true;
                             break;
                         default:
-                            System.out.println("That is not an option, please try entering the number for your sort method again");
+                            System.out.println("That is not an option, please try again");
                             break;
                     }
                 }
@@ -200,10 +198,13 @@ class Driver {
                 m.displayNums();
                 System.out.println("would you like to use another sort method? Y/n");
                 userInput = s.nextLine().toLowerCase();
-            } while (userInput.equals("y"));
+            }
+            while (userInput.equals("y")); // if yes, allows the user to try additional sort methods with the math program they chose earlier
             System.out.println("Would you like to try again with a different math tool? Y/n");
             userInput = s.nextLine().toLowerCase();
-        } while (userInput.equals("y"));
+        }
+        while (userInput.equals("y")); // If yes, allows the user to choose a different math program, and therefore a different default sorting method
+
     }
 
     public static void main(String[] args) {
